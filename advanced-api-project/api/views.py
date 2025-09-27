@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .models import Book
 from rest_framework import generics, permissions
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly 
 from .serializers import BookSerializer
 
 # Create your views here.
@@ -11,7 +12,7 @@ class BookListView(generics.ListAPIView):
     # context_object_name = 'books'
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [AllowAny]
 
 
 
@@ -22,7 +23,7 @@ class BookDetailView(generics.RetrieveAPIView):
     # pk_url_kwarg = 'book_id'
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [AllowAny, IsAuthenticatedOrReadOnly]
 
 
 
@@ -36,7 +37,7 @@ class BookCreateView(generics.CreateAPIView):
     #     return super().form_valid(form)
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         # Hook: Save any extra logic here if needed
@@ -59,7 +60,7 @@ class BookUpdateView(generics.UpdateAPIView):
 
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def perform_update(self, serializer):
         # Hook for custom update behavior
@@ -77,4 +78,4 @@ class BookDeleteView(generics.DestroyAPIView):
 
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
