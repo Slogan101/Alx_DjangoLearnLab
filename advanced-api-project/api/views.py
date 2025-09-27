@@ -12,7 +12,7 @@ class BookListView(generics.ListAPIView):
     # context_object_name = 'books'
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly, AllowAny]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 
 
@@ -23,7 +23,7 @@ class BookDetailView(generics.RetrieveAPIView):
     # pk_url_kwarg = 'book_id'
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [AllowAny, IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 
 
