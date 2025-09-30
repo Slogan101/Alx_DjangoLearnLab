@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,9 +14,20 @@
         <nav>
             <ul>
                 <li><a href="{% url 'home' %}">Home</a></li>
-                <li><a href="{% url 'posts' %}">Blog Posts</a></li>
+                <li><a href="#">Blog Posts</a></li>
+                {% if user.is_authenticated %}
+                    <li><a class="nav-item nav-link" href="{% url 'profile' %}">Profile</a></li>
+                    
+                        <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="nav-item nav-link btn btn-link">
+                                Logout
+                            </button>
+                        </form>
+                    {% else %}
                 <li><a href="{% url 'login' %}">Login</a></li>
                 <li><a href="{% url 'register' %}">Register</a></li>
+                {% endif %}
             </ul>
         </nav>
     </header>
