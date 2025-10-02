@@ -3,8 +3,11 @@ from .forms import UserRegistrationForm, UserUpdateForm, ProfileUpdateForm, Comm
 from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib import messages
+from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
+from taggit.forms import TagWidget
+from taggit.models import Tag
 from .models import Post, Comment
 from django.urls import reverse_lazy
 
@@ -67,7 +70,10 @@ class PostDetailView(DetailView):
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
-    fields = ['title', 'content']
+    fields = ['title', 'content', 'tags']
+    widgets = {
+            'tags': TagWidget(attrs={'class': 'form-control'}),
+        }
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -76,7 +82,10 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
-    fields = ['title', 'content']
+    fields = ['title', 'content', 'tags']
+    widgets = {
+            'tags': TagWidget(attrs={'class': 'form-control'}),
+        }
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -189,3 +198,24 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def get_success_url(self):
         return reverse_lazy('post-detail', kwargs={'pk': self.object.post.id})
+    
+
+def search_posts(request):
+    query = request.GET.get('q')
+    results = Post.objects.all()
+
+    if query:
+        results = results.filter(
+            Q(title__icontains=query) |
+            Q(content__icontains=query) |
+            Q(tags__name__icontains=query)
+        ).distinct()
+
+    return render(request, 'blog/search_results.html', {'posts': results, 'query': query})
+
+
+def posts_by_tag(request, tag_slug):
+    tag = Tag.objects.get(slug=tag_slug)
+    posts = Post.objects.filter(tags=tag)
+
+    return render(request, 'blog/tag_posts.html', {'tag': tag, 'posts': posts})
