@@ -1,15 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import UserRegistrationForm, UserUpdateForm, ProfileUpdateForm, CommentForm
+from .forms import UserRegistrationForm, UserUpdateForm, ProfileUpdateForm, CommentForm, PostForm
 from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib import messages
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
-from taggit.forms import TagWidget
 from taggit.models import Tag
 from .models import Post, Comment
 from django.urls import reverse_lazy
+from taggit.forms import TagWidget
 
 # Create your views here.
 
@@ -70,10 +70,7 @@ class PostDetailView(DetailView):
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
-    fields = ['title', 'content', 'tags']
-    widgets = {
-            'tags': TagWidget(attrs={'class': 'form-control'}),
-        }
+    form_class = PostForm
 
     def form_valid(self, form):
         form.instance.author = self.request.user
