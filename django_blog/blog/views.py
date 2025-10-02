@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import UserRegistrationForm, UserUpdateForm, ProfileUpdateForm, CommentForm, PostForm
+from .forms import UserRegistrationForm, UserUpdateForm, ProfileUpdateForm, CommentForm, PostForm, PostUpdateForm
 from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib import messages
@@ -79,10 +79,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
-    fields = ['title', 'content', 'tags']
-    widgets = {
-            'tags': TagWidget(attrs={'class': 'form-control'}),
-        }
+    form_class = PostUpdateForm
 
     def form_valid(self, form):
         form.instance.author = self.request.user

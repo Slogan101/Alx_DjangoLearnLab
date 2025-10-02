@@ -50,3 +50,11 @@ class PostForm(forms.ModelForm):
     widgets = {
             'tags': TagWidget(attrs={'class': 'form-control'}),
         }
+    
+class PostUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ['title', 'content', 'tags']
+        widgets = {
+            'tags': TagWidget(attrs={'class': 'form-control'}),
+        }
