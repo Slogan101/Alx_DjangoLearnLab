@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate
 from .serializers import RegisterSerializer, LoginSerializer, UserProfileSerializer
 from rest_framework.decorators import api_view, permission_classes
 from django.contrib.auth import get_user_model
-from rest_framework.permissions import IsAuthenticated
+from rest_framework import permissions
 from django.shortcuts import get_object_or_404
 
 User = get_user_model()
@@ -31,7 +31,7 @@ class LoginView(generics.GenericAPIView):
 
 class ProfileView(generics.RetrieveUpdateAPIView):
     serializer_class = UserProfileSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
         return self.request.user
@@ -40,7 +40,7 @@ class ProfileView(generics.RetrieveUpdateAPIView):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([permissions.IsAuthenticated])
 def follow_user(request, user_id):
     target_user = get_object_or_404(User, id=user_id)
     if target_user == request.user:
@@ -49,7 +49,7 @@ def follow_user(request, user_id):
     return Response({'message': f'You are now following {target_user.username}.'})
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([permissions.IsAuthenticated])
 def unfollow_user(request, user_id):
     target_user = get_object_or_404(User, id=user_id)
     request.user.following.remove(target_user)
